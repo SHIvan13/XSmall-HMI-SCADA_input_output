@@ -19,8 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
     FetchContent_MakeAvailable(SFML)
 
 set(YOUR_SOURCES
-    ./main.cpp
-    ./foo.cpp
+    ./src/main.cpp
     ./src/gui_widgets.cpp
     ./src/scada_app.cpp
 )
