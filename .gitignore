@@ -1,0 +1,29 @@
+# Сборка
+build/
+bin/
+*.exe
+
+# Объектные файлы
+*.o
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Системные
+.DS_Store
+Thumbs.db
+
+# Автосохранения
+config/autosave.xml
+
+# Тесты
+test_results.xml
