@@ -1,43 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scada_config>
     <!-- Кнопка -->
-    <button>
-        <name>start_button</name>
-        <x>50</x>
-        <y>50</y>
-        <width>150</width>
-        <height>50</height>
-        <text>Пуск</text>
-    </button>
+    <button name="start_button" x="50" y="100" width="150" height="50">Пуск</button>
     
     <!-- Поле ввода текста -->
-    <textfield>
-        <name>temp_input</name>
-        <x>50</x>
-        <y>150</y>
-        <width>200</width>
-        <height>40</height>
-    </textfield>
+    <textfield name="input" x="50" y="150" width="200" height="40"></textfield>
     
     <!-- Текстовое поле (дисплей) -->
-    <textdisplay>
-        <name>pressure_display</name>
-        <x>50</x>
-        <y>250</y>
-        <width>300</width>
-        <height>40</height>
-        <value>100</value>
-        <unit>бар</unit>
-    </textdisplay>
+    <textdisplay name="pressure_display" x="50" y="250" width="300" height="40" value="100" unit="бар"></textdisplay>
+
+    <button name="stop_button" x="300" y="500" width="150" height="50">Стоп</button>
     
-    <!-- Текстовое поле без обозначения -->
-    <textdisplay>
-        <name>status_display</name>
-        <x>50</x>
-        <y>350</y>
-        <width>300</width>
-        <height>40</height>
-        <value>Норма</value>
-        <unit>-</unit>
-    </textdisplay>
 </scada_config>
