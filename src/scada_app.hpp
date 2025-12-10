@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <vector>
 
 // Структуры данных из XML
 struct Button{
@@ -51,20 +52,21 @@ class Widget{
         // virtual - наследники могут переопределить метод, если =0 - наследники должны реализовать 
         virtual void draw(sf::RenderTarget& target) const = 0;   // Отрисовка объекта
         virtual void update(float mouseX, float mouseY) = 0;     // Обновление состояния (60 раз/сек)
-        virtual void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) = 0;   // Обработка событий (клик, нажатие)
-        virtual bool contains(float x, float y) const = 0;   // Проверка попадания мышки в ...
+        virtual void handleEvent(const sf::Event& event,         // Обработка событий (клик, нажатие)
+                                 const sf::Vector2f& mousePos) = 0;   
+        virtual bool contains(float x, float y) const = 0;       // Проверка попадания мышки в ...
         
-        // Наследники исп, как есть
-        void setPosition(float x, float y);   // Координаты
+        // Наследники исп ф-ции, как есть
+        void setPosition(float x, float y);            // Координаты
         void setSize(float w, float h); 
-        void setVariableName(const std::string& name);   // name - имя виджета в XML
-        std::string getVariableName() const;   // Возвращает имя
+        void setVariableName(const std::string& name); // name - имя виджета в XML
+        std::string getVariableName() const;           // Возвращает имя
 
     protected:
-        sf::Vector2f position;   // Координаты виджета
+        sf::Vector2f position;    // Координаты виджета
         sf::Vector2f size;
-        std::string variableName;   // variableName - имя переменной 
-        bool visible = true;   // Проверка состояния виджета (рисуется или нет)
+        std::string variableName; // variableName - имя переменной 
+        bool visible = true;      // Проверка состояния виджета (рисуется или нет)
 
 };
 class Button: public Widget{ 
@@ -72,39 +74,48 @@ class Button: public Widget{
         Button(const std::string& label, const sf::Font& font);
         void draw(sf::RenderTarget& target) const override;  // Рисует кнопку
         void update(float mouseX, float mouseY) override;    // Обновляет hover/цвета
-        void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) override;
+        void handleEvent(const sf::Event& event, 
+                         const sf::Vector2f& mousePos) override;
         bool contains(float x, float y) const override;      // Проверяет попадание
         
         // Свои методы Button
-        void setColors(const sf::Color& normal, const sf::Color& hover, const sf::Color& pressed);   // Обработка кликов
-        void setCallback(std::function<void()> callback);    // Действие при клике
-        void setText(const std::string& text);               // Меняет текст
+        void setColors(const sf::Color& normal, 
+                       const sf::Color& hover,            // Обработка кликов (смена цвета при р. состояниях)
+                       const sf::Color& pressed);   
+        void setCallback(std::function<void()> callback); // Привязка ф-ции, которая вып. при клике
+        void setText(const std::string& text);            // Меняет текст на кнопке
     private:
         sf::RectangleShape shape;
         sf::Text text;
-        sf::Color normalColor, hoverColor, pressColor;   // Обычное, при наведении, при нажатии
+        sf::Color normalColor, hoverColor, pressColor; // Цвет: Обычный, при наведении, при нажатии
         bool isHovered = false;
         bool isPressed = false;
-        std::function<void()> onClick;   // Коробка для хранения функции
+        std::function<void()> onClick;                 // Коробка для хранения функции (чтобы можно было ее вызвать)
 };
 
 class TextField: public Widget{
     public:
         TextField(const std::string& varName, const sf::Font& font);
 
-        void draw(sf::RenderTarget& target) const override;  // Поле + текст
-        void update(float mouseX, float mouseY) override;    // Мигание курсора
-        void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) override;   // Ввод с клавиатуры
+        void draw(sf::RenderTarget& target) const override;      // Поле + текст
+        void update(float mouseX, float mouseY) override;        // Мигание курсора
+        void handleEvent(const sf::Event& event, 
+                         const sf::Vector2f& mousePos) override; // Ввод с клавиатуры
         bool contains(float x, float y) const override;
         
+        void setOnChange(std::function<void(const std::string&)> callback); // Привязка ф-ции, которая вызовется при изм текста
+        void setText(const std::string& text);                              // Изм. текста на кнопке
+        std::string getText() const;
     private:
-        sf::RectangleShape background;   // Фон поля для текста
+        sf::RectangleShape background;                    // Фон поля для текста
         sf::Text text;
+        std::function<void(const std::string&)> onChange; // При изменении текста
+        bool isFocused = false;                           // Активно ли поле для ввода
 };
 class TextDisplay: public Widget{
     public:
         TextDisplay(const std::string& varName, 
-                    const std::string& format,  // Например: "Температура: {...}..."
+                    const std::string& format,                // Например: "Температура: {...}..."
                     const sf::Font& font);
         void draw(sf::RenderTarget& target) const override;   // Рисует фон + текст
         void update(float mouseX, float mouseY) override;     // Центрирует текст
@@ -112,7 +123,12 @@ class TextDisplay: public Widget{
                         const sf::Vector2f& mousePos) override;
         bool contains(float x, float y) const override;
         
+        // Свои методы:
+        void updateDisplay(const std::string& value);  // Обновляет значение для отображения
+        void setFormat(const std::string& format);     // Меняет шаблон вывода (теип-ра 25 / давление 100)
     private:
-        sf::RectangleShape background;    // Фон дисплея
+        sf::RectangleShape background; // Фон дисплея
         sf::Text text; 
+        std::string format;            // Шаблон для отображения
+        std::string currentValue;      // Текущее значение
 };
