@@ -134,6 +134,7 @@ void Button::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) {
             isPressed = false;                               // Сбрасывание нажатия
         }
     }
+}
 // (4) Проверка попадения точки в границы кнопки
 bool Button::contains(float x, float y) const {
     return shape.getGlobalBounds().contains(x, y);
@@ -153,7 +154,7 @@ void Button::setCallback(std::function<void()> callback) {
 void Button::setText(const std::string& newText) {
     text.setString(newText);
 }
-}
+
 
 // БЛОК 4 - TextField
 TextField::TextField(const std::string& varName, const sf::Font& font) {
@@ -242,11 +243,8 @@ std::string TextField::getText() const {
 
 // БЛОК 5 - TextDisplay 
 
-TextDisplay::TextDisplay(const std::string& varName, 
-                         const std::string& fmt, 
-                         const sf::Font& font) {
+TextDisplay::TextDisplay(const std::string& varName, const sf::Font& font) {
     variableName = varName;
-    format = fmt;
     currentValue = "";
      // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
