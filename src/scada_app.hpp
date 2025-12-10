@@ -4,9 +4,9 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <fstream>
 
-// Структуры данных из XML
-struct Button{
+struct Btn{
     std::string name;
     int y;
     int x;
@@ -14,14 +14,14 @@ struct Button{
     int height;
     std::string text;
 };
-struct Input{
+struct Inpt{
     std::string name;
     int y;
     int x;
     int width;
     int height;
 };
-struct Output{
+struct Otpt{
     std::string name;
     int y;
     int x;
@@ -30,18 +30,18 @@ struct Output{
     std::string value;
     std::string unit;
 };
+
 struct XMLData {
-    std::vector<Button> buttons;
-    std::vector<Input> inputs;
-    std::vector<Output> outputs;
+    std::vector<Btn> buttons;
+    std::vector<Inpt> inputs;
+    std::vector<Otpt> outputs;
 };
 
 class XMLParcer {
 public:
     XMLParcer();
-    bool getData(const std::string& filename, XMLData& data);  // Функция парсинга
+    bool getData(const std::string& filename, XMLData& data);
     ~XMLParcer();
-
 };
 
 class Widget{
@@ -88,6 +88,8 @@ class Button: public Widget{
         sf::RectangleShape shape;
         sf::Text text;
         sf::Color normalColor, hoverColor, pressColor; // Цвет: Обычный, при наведении, при нажатии
+        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
+        sf::Text nameText; 
         bool isHovered = false;
         bool isPressed = false;
         std::function<void()> onClick;                 // Коробка для хранения функции (чтобы можно было ее вызвать)
@@ -111,12 +113,12 @@ class TextField: public Widget{
         sf::Text text;
         std::function<void(const std::string&)> onChange; // При изменении текста
         bool isFocused = false;                           // Активно ли поле для ввода
+        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
+        sf::Text nameText; 
 };
 class TextDisplay: public Widget{
     public:
-        TextDisplay(const std::string& varName, 
-                    const std::string& format,                // Например: "Температура: {...}..."
-                    const sf::Font& font);
+        TextDisplay(const std::string& varName, const sf::Font& font);
         void draw(sf::RenderTarget& target) const override;   // Рисует фон + текст
         void update(float mouseX, float mouseY) override;     // Центрирует текст
         void handleEvent(const sf::Event& event,              // Пустой, может пригодиться
@@ -131,4 +133,8 @@ class TextDisplay: public Widget{
         sf::Text text; 
         std::string format;            // Шаблон для отображения
         std::string currentValue;      // Текущее значение
+        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
+        sf::Text nameText; 
+        
+        
 };
