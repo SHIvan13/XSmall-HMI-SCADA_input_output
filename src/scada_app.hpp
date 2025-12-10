@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <functional>
 
 // Структуры данных из XML
 struct Button{
@@ -28,37 +29,90 @@ struct Output{
     std::string value;
     std::string unit;
 };
+struct XMLData {
+    std::vector<Button> buttons;
+    std::vector<Input> inputs;
+    std::vector<Output> outputs;
+};
+
+class XMLParcer {
+public:
+    XMLParcer();
+    bool getData(const std::string& filename, XMLData& data);  // Функция парсинга
+    ~XMLParcer();
+
+};
 
 class Widget{
     public:
         Widget() = default;
-        virtual ~Widget() = default; // virtual - для правильного удаления наследников
+        virtual ~Widget() = default;   // virtual - для правильного удаления наследников
 
         // virtual - наследники могут переопределить метод, если =0 - наследники должны реализовать 
-        virtual void draw(sf::RenderTarget& target) const = 0; // Отрисовка объекта
-        virtual void update(float mouseX, float mouseY) = 0; // Обновление состояния (60 раз/сек)
-        virtual void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) = 0; // Обработка событий (клик, нажатие)
-        virtual bool contains(float x, float y) const = 0; // Проверка попадания мышки в ...
+        virtual void draw(sf::RenderTarget& target) const = 0;   // Отрисовка объекта
+        virtual void update(float mouseX, float mouseY) = 0;     // Обновление состояния (60 раз/сек)
+        virtual void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) = 0;   // Обработка событий (клик, нажатие)
+        virtual bool contains(float x, float y) const = 0;   // Проверка попадания мышки в ...
         
         // Наследники исп, как есть
-        void setPosition(float x, float y); // Координаты
+        void setPosition(float x, float y);   // Координаты
         void setSize(float w, float h); 
-        void setVariableName(const std::string& name); // name - имя виджета в XML
-        std::string getVariableName() const; // Возвращает имя
+        void setVariableName(const std::string& name);   // name - имя виджета в XML
+        std::string getVariableName() const;   // Возвращает имя
 
     protected:
-        sf::Vector2f position; // Координаты виджета
+        sf::Vector2f position;   // Координаты виджета
         sf::Vector2f size;
-        std::string variableName; // variableName - имя переменной 
-        bool visible = true; // Проверка состояния виджета (рисуется или нет)
+        std::string variableName;   // variableName - имя переменной 
+        bool visible = true;   // Проверка состояния виджета (рисуется или нет)
 
 };
 class Button: public Widget{ 
-    
+    public:
+        Button(const std::string& label, const sf::Font& font);
+        void draw(sf::RenderTarget& target) const override;  // Рисует кнопку
+        void update(float mouseX, float mouseY) override;    // Обновляет hover/цвета
+        void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) override;
+        bool contains(float x, float y) const override;      // Проверяет попадание
+        
+        // Свои методы Button
+        void setColors(const sf::Color& normal, const sf::Color& hover, const sf::Color& pressed);   // Обработка кликов
+        void setCallback(std::function<void()> callback);    // Действие при клике
+        void setText(const std::string& text);               // Меняет текст
+    private:
+        sf::RectangleShape shape;
+        sf::Text text;
+        sf::Color normalColor, hoverColor, pressColor;   // Обычное, при наведении, при нажатии
+        bool isHovered = false;
+        bool isPressed = false;
+        std::function<void()> onClick;   // Коробка для хранения функции
 };
-class TextField: public Widget{
 
+class TextField: public Widget{
+    public:
+        TextField(const std::string& varName, const sf::Font& font);
+
+        void draw(sf::RenderTarget& target) const override;  // Поле + текст
+        void update(float mouseX, float mouseY) override;    // Мигание курсора
+        void handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) override;   // Ввод с клавиатуры
+        bool contains(float x, float y) const override;
+        
+    private:
+        sf::RectangleShape background;   // Фон поля для текста
+        sf::Text text;
 };
 class TextDisplay: public Widget{
-
+    public:
+        TextDisplay(const std::string& varName, 
+                    const std::string& format,  // Например: "Температура: {...}..."
+                    const sf::Font& font);
+        void draw(sf::RenderTarget& target) const override;   // Рисует фон + текст
+        void update(float mouseX, float mouseY) override;     // Центрирует текст
+        void handleEvent(const sf::Event& event,              // Пустой, может пригодиться
+                        const sf::Vector2f& mousePos) override;
+        bool contains(float x, float y) const override;
+        
+    private:
+        sf::RectangleShape background;    // Фон дисплея
+        sf::Text text; 
 };
