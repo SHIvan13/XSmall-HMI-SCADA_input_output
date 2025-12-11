@@ -64,11 +64,11 @@ std::string Widget::getVariableName() const {
 Button::Button(const std::string& label, const sf::Font& font){  
     // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
-    nameLabel.setOutlineColor(sf::Color(100, 100, 100));  // Темно-серый обводка
-    nameLabel.setOutlineThickness(1.0f);
+    nameLabel.setOutlineColor(sf::Color::Black);  // Темно-серый обводка   НА ЧЕРНЫЙ поменял цвет
+    nameLabel.setOutlineThickness(2.0f);
     // Настройка текста метки
     nameText.setFont(font);
-    nameText.setCharacterSize(14);
+    nameText.setCharacterSize(14);                        // с 14 на 16 !!!!
     nameText.setFillColor(sf::Color::White);    
     // Методы класса sf::RectangleShape
     shape.setFillColor(sf::Color(255, 165, 0)); 
@@ -96,6 +96,29 @@ void Button::draw(sf::RenderTarget& target) const {
 }
 // (2) Наведение мыши
 void Button::update(float mouseX, float mouseY){
+    // Позиция и размер прямоугольника кнопки
+    shape.setPosition(position);          
+    shape.setSize(size);
+
+    //  Центрирование текста на кнопке
+    sf::FloatRect textBounds = text.getLocalBounds();
+    text.setOrigin(textBounds.left + textBounds.width/2.0f,               // Привязка текста в центр
+                   textBounds.top + textBounds.height/2.0f);
+    text.setPosition(position.x + size.x/2.0f, position.y + size.y/2.0f); // Размещение текста в центре
+    // Метка над кнопкой
+
+    float nameHeight = 20.0f;
+    nameLabel.setPosition(position.x, position.y - nameHeight);
+    nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
+
+    // Центрирование текста в метке
+    nameText.setString(variableName);                                     // Имя виджета в текст
+    sf::FloatRect nameBounds = nameText.getLocalBounds();                 // Размер текста
+    nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,           // Центр по x  - Привязка точки в центр текста
+                   nameBounds.top + nameBounds.height/2.0f);              // По y
+    nameText.setPosition(position.x + size.x/2.0f,
+                     position.y - nameHeight/2.0f);
+
     isHovered = contains(mouseX, mouseY); // Наведение мыши - проверка
     // Цвет в зависимости от состояния
     if (isPressed) {                      // При нажатии
@@ -106,6 +129,10 @@ void Button::update(float mouseX, float mouseY){
     } 
     else {
         shape.setFillColor(normalColor);
+    }
+    //  НГНННН
+    while (text.getLocalBounds().width > size.x - 20 && text.getCharacterSize() > 10) {
+        text.setCharacterSize(text.getCharacterSize() - 1);
     }
 }
 // (3) Обработка событий кнопки (Клик, нажатие клавиши)
@@ -137,7 +164,12 @@ void Button::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) {
 }
 // (4) Проверка попадения точки в границы кнопки
 bool Button::contains(float x, float y) const {
-    return shape.getGlobalBounds().contains(x, y);
+    // return shape.getGlobalBounds().contains(x, y);
+    // Учитывается метка имени
+    float nameHeight = 20.0f;
+    sf::FloatRect buttonBounds(position.x, position.y - nameHeight, 
+                               size.x, size.y + nameHeight);
+    return buttonBounds.contains(x, y);
 }
 // Свои методы Button === ЧТО МОЖНО НАСТРОИТЬ СНАРУЖИ ===
 // Цвета для разных состояний
@@ -162,8 +194,8 @@ TextField::TextField(const std::string& varName, const sf::Font& font) {
     
     // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
-    nameLabel.setOutlineColor(sf::Color(100, 100, 100));  // Темно-серый обводка
-    nameLabel.setOutlineThickness(1.0f);
+    nameLabel.setOutlineColor(sf::Color::Black);  // Темно-серый обводка
+    nameLabel.setOutlineThickness(2.0f);
     // Настройка текста метки
     nameText.setFont(font);
     nameText.setCharacterSize(14);
@@ -171,7 +203,7 @@ TextField::TextField(const std::string& varName, const sf::Font& font) {
 
     background.setFillColor(sf::Color::White);
     background.setOutlineColor(sf::Color::Black);
-    background.setOutlineThickness(1.0f);
+    background.setOutlineThickness(2.0f);
     
     text.setFont(font);
     text.setString("");
@@ -181,12 +213,40 @@ TextField::TextField(const std::string& varName, const sf::Font& font) {
 
 void TextField::draw(sf::RenderTarget& target) const {
     if (!visible) return;
+    target.draw(nameLabel);
+    target.draw(nameText);
+
     target.draw(background);
     target.draw(text);
 }
 
 void TextField::update(float mouseX, float mouseY) {
-    // Можно добавить мигание курсора если поле активно
+    // Обновление позиции и размера
+    background.setPosition(position);
+    background.setSize(size);
+    
+    // Центрирование текста
+    //text.setPosition(position.x + 5, position.y + (size.y - 20)/2);   // 5 - отступ слева, 20 - высота текста
+    sf::FloatRect textBounds = text.getLocalBounds();
+    text.setOrigin(textBounds.left + textBounds.width/2.0f,
+                   textBounds.top + textBounds.height/2.0f);
+    text.setPosition(position.x + size.x/2.0f,
+                     position.y + size.y/2.0f);
+    // Обновление метки имени
+    float nameHeight = 20.0f;
+    nameLabel.setPosition(position.x, position.y - nameHeight);
+    nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
+    
+    nameText.setString(variableName);
+    sf::FloatRect nameBounds = nameText.getLocalBounds();
+    nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,       // Точка привязки из sf::Transformable
+                       nameBounds.top + nameBounds.height/2.0f);
+    nameText.setPosition(position.x + size.x/2.0f,
+                         position.y - nameHeight/2.0f);
+    // Уменьшение текста, выходящего за границы
+    while (text.getLocalBounds().width > size.x - 20 && text.getCharacterSize() > 10) {   // Если текст шире, чем поле с отступами и
+        text.setCharacterSize(text.getCharacterSize() - 1);                               // размер  шрифтва больще 10px, то уменьшаем на 1px
+    }
 }
 
 void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) {
@@ -240,47 +300,82 @@ void TextField::setText(const std::string& newText) {
 std::string TextField::getText() const {
     return text.getString();
 }
+// Проверка, помещается ли текст в поле
+bool TextField::checkTextFits(const std::string& textStr) const {
+    if (size.x <= 0) return true;
+    sf::Text tempText = text;                           // Временный текст для измерения
+    tempText.setString(textStr);
+
+    sf::FloatRect bounds = tempText.getLocalBounds();   // Границы текста  
+    float padding = 10.0f;                              // Отступы слева и справа (по 5 пикселей)
+
+    return bounds.width <= (size.x - padding);          // Текст помещается, если его ширина меньше ширины поля минус отступы
+}
 
 // БЛОК 5 - TextDisplay 
 
 TextDisplay::TextDisplay(const std::string& varName, const sf::Font& font) {
     variableName = varName;
     currentValue = "";
+    value = "";        // НОВОЕ
+    format = "{...}";  // НОВОЕ
      // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
-    nameLabel.setOutlineColor(sf::Color(100, 100, 100));  // Темно-серый обводка
-    nameLabel.setOutlineThickness(1.0f);
+    nameLabel.setOutlineColor(sf::Color::Black); 
+    nameLabel.setOutlineThickness(2.0f);
     
     // Настройка текста метки
     nameText.setFont(font);
     nameText.setCharacterSize(14);
     nameText.setFillColor(sf::Color::White);
 
-    background.setFillColor(sf::Color(230, 230, 230));  // Светло-серый фон
+    background.setFillColor(sf::Color::White);  
     background.setOutlineColor(sf::Color::Black);
-    background.setOutlineThickness(1.0f);
+    background.setOutlineThickness(2.0f);
     
     text.setFont(font);
     text.setCharacterSize(18);
     text.setFillColor(sf::Color::Black);
     
     // Устанавливаем начальный текст
-    updateDisplay("");
+    //updateDisplay("");    // КОММЕНТ ПОКА
+    text.setString("");
 }
 
 void TextDisplay::draw(sf::RenderTarget& target) const {
     if (!visible) return;
+    target.draw(nameLabel);
+    target.draw(nameText);
+
     target.draw(background);
     target.draw(text);
 }
 
 void TextDisplay::update(float mouseX, float mouseY) {
+    currentValue = value;
+    text.setString(value);  
+    // Обновляем позицию и размер
+    background.setPosition(position);
+    background.setSize(size);
+    
     // Центрируем текст
     sf::FloatRect textBounds = text.getLocalBounds();
-    text.setPosition(
-        position.x + (size.x - textBounds.width) / 2,
-        position.y + (size.y - textBounds.height) / 2 - textBounds.top
-    );
+    text.setOrigin(textBounds.left + textBounds.width/2.0f,
+                   textBounds.top + textBounds.height/2.0f);
+    text.setPosition(position.x + size.x/2.0f,
+                     position.y + size.y/2.0f);
+    
+    // Обновляем метку имени
+    float nameHeight = 20.0f;
+    nameLabel.setPosition(position.x, position.y - nameHeight);
+    nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
+    
+    nameText.setString(variableName);
+    sf::FloatRect nameBounds = nameText.getLocalBounds();
+    nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,
+                       nameBounds.top + nameBounds.height/2.0f);
+    nameText.setPosition(position.x + size.x/2.0f,
+                         position.y - nameHeight/2.0f);
 }
 
 void TextDisplay::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) {
@@ -291,7 +386,8 @@ bool TextDisplay::contains(float x, float y) const {
     return background.getGlobalBounds().contains(x, y);
 }
 
-void TextDisplay::updateDisplay(const std::string& value) {
+void TextDisplay::updateDisplay(const std::string& newValue) {  // НОВОЕ - newValue вместо value
+    value = newValue;                                           // НОВОЕ
     currentValue = value;
     
     // Форматируем текст: заменяем {...} на значение
@@ -306,5 +402,16 @@ void TextDisplay::updateDisplay(const std::string& value) {
 
 void TextDisplay::setFormat(const std::string& fmt) {
     format = fmt;
-    updateDisplay(currentValue);  // Обновляем с новым форматом
+    updateDisplay(value);                                       // Обновляем с новым форматом
+}
+void TextDisplay::setValue(const std::string& newValue) {       // Внешнее изменение значения
+    updateDisplay(newValue);
+}
+
+std::string TextDisplay::getValue() const {
+    return value;
+}
+
+std::string TextDisplay::getFormat() const {
+    return format;
 }

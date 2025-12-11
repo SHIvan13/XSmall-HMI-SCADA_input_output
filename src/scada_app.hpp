@@ -107,6 +107,7 @@ class TextField: public Widget{
         
         void setOnChange(std::function<void(const std::string&)> callback); // Привязка ф-ции, которая вызовется при изм текста
         void setText(const std::string& text);                              // Изм. текста на кнопке
+        bool checkTextFits(const std::string& textStr) const;               // <- НОВОЕ
         std::string getText() const;
     private:
         sf::RectangleShape background;                    // Фон поля для текста
@@ -128,9 +129,13 @@ class TextDisplay: public Widget{
         // Свои методы:
         void updateDisplay(const std::string& value);  // Обновляет значение для отображения
         void setFormat(const std::string& format);     // Меняет шаблон вывода (теип-ра 25 / давление 100)
+        void setValue(const std::string& newValue);     //
+        std::string getValue() const;                   // НОВОЕ
+        std::string getFormat() const;                  //
     private:
         sf::RectangleShape background; // Фон дисплея
         sf::Text text; 
+        std::string value;                              // НОВОЕ
         std::string format;            // Шаблон для отображения
         std::string currentValue;      // Текущее значение
         sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
