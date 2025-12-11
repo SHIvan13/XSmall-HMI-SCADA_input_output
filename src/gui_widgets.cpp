@@ -4,7 +4,7 @@ using std::endl;
 using std::cout;
 
 
-// БЛОК 2 - Widget
+// БЛОК 1 - Widget
 void Widget::setPosition(float x, float y){
     position.x = x;
     position.y = y;
@@ -20,7 +20,7 @@ std::string Widget::getVariableName() const {
     return variableName;
 }
 
-// БЛОК 3 - Button 
+// БЛОК 2 - Button 
 // Переопределенные методы === СКРЫТЫЕ ВНУТРЕННИЕ ФУНКЦИИ ===
 // Создание кнопки
 Button::Button(const std::string& label, const sf::Font& font){  
@@ -74,7 +74,7 @@ void Button::update(float mouseX, float mouseY){
     nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
 
     // Центрирование текста в метке
-    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));                                     // Имя виджета в текст
+    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
     sf::FloatRect nameBounds = nameText.getLocalBounds();                 // Размер текста
     nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,           // Центр по x  - Привязка точки в центр текста
                    nameBounds.top + nameBounds.height/2.0f);              // По y
@@ -92,7 +92,7 @@ void Button::update(float mouseX, float mouseY){
     else {
         shape.setFillColor(normalColor);
     }
-    //  НГНННН
+    
     while (text.getLocalBounds().width > size.x - 20 && text.getCharacterSize() > 10) {
         text.setCharacterSize(text.getCharacterSize() - 1);
     }
@@ -150,7 +150,7 @@ void Button::setText(const std::string& newText) {
 }
 
 
-// БЛОК 4 - TextField
+// БЛОК 3 - TextField
 TextField::TextField(const std::string& varName, const sf::Font& font) {
     variableName = varName;
     
@@ -188,7 +188,6 @@ void TextField::update(float mouseX, float mouseY) {
     background.setSize(size);
     
     // Центрирование текста
-    //text.setPosition(position.x + 5, position.y + (size.y - 20)/2);   // 5 - отступ слева, 20 - высота текста
     sf::FloatRect textBounds = text.getLocalBounds();
     text.setOrigin(textBounds.left + textBounds.width/2.0f,
                    textBounds.top + textBounds.height/2.0f);
@@ -233,10 +232,10 @@ void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos
     }
     else if (event.type == sf::Event::TextEntered && isFocused) {
         // Обработка ввода текста
-        if (event.text.unicode == 8) {              // Backspace
+        if (event.text.unicode == 8) {                 // Backspace
             current = text.getString();
             if (!current.isEmpty()) {
-                current.erase(current.getSize() - 1);        // НОВОЕ - Проверка наличия символов перед удалением
+                current.erase(current.getSize() - 1);  // Проверка наличия символов перед удалением
                 text.setString(current);
             }
         }
@@ -245,14 +244,10 @@ void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos
         
             sf::String newText = current + event.text.unicode;  // Пробуем добавить символ
 
-            // Через sf::String (для русского)
-            if (!checkTextFits(newText)) {  // БЕЗ точки с запятой!
+            if (!checkTextFits(newText)) {
                 return;  
             }
-            // if (!checkTextFits((current + event.text.unicode).toAnsiString())) {
-            //     return; 
-            // }
-            current += event.text.unicode;                   // НОВОЕ - sf::String преобразует число unicode в символ
+            current += event.text.unicode;                   // sf::String преобразует число unicode в символ
             text.setString(current);
 
             // Вызываем callback если есть
@@ -289,7 +284,7 @@ bool TextField::checkTextFits(const sf::String& textStr) const {
     return bounds.width <= (size.x - padding);          // Текст помещается, если его ширина меньше ширины поля минус отступы
 }
 
-// БЛОК 5 - TextDisplay 
+// БЛОК 4 - TextDisplay 
 
 TextDisplay::TextDisplay(const std::string& varName, const std::string& val, const sf::Font& font) {
     variableName = varName;
@@ -359,7 +354,7 @@ bool TextDisplay::contains(float x, float y) const {
     return background.getGlobalBounds().contains(x, y);
 }
 
-void TextDisplay::updateDisplay(const std::string& newValue) {  // НОВОЕ - newValue вместо value                                         // НОВОЕ
+void TextDisplay::updateDisplay(const std::string& newValue) {
     currentValue = newValue;
     text.setString(sf::String::fromUtf8(newValue.begin(), newValue.end()));
 }
