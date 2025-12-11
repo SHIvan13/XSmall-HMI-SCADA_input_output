@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scada_config>
+   <!-- Кнопки -->
+    <button name="btn_start" x="100" y="100" width="120" height="50">Start</button>
+    <button name="btn_stop" x="250" y="100" width="120" height="50">Stop</button>
+    
+    <!-- Поля ввода -->
+    <textfield name="input_temp" x="100" y="200" width="150" height="30"/>
+    <textfield name="input_pressure" x="300" y="200" width="150" height="30"/>
+    
+    <!-- Дисплеи -->
+    <textdisplay name="output_temp" x="100" y="300" width="150" height="30" value="25.5"/>
+    <textdisplay name="output_pressure" x="300" y="300" width="150" height="30" value="1.0"/>
+</scada_config>
