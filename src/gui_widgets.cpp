@@ -217,6 +217,7 @@ void TextField::update(float mouseX, float mouseY) {
 
 void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos) {
     if (!visible) return;
+    sf::String current;
     
     if (event.type == sf::Event::MouseButtonPressed) {
         // Если кликнули по полю - фокусируем его
@@ -233,14 +234,14 @@ void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos
     else if (event.type == sf::Event::TextEntered && isFocused) {
         // Обработка ввода текста
         if (event.text.unicode == 8) {              // Backspace
-            sf::String current = text.getString();
+            current = text.getString();
             if (!current.isEmpty()) {
                 current.erase(current.getSize() - 1);        // НОВОЕ - Проверка наличия символов перед удалением
                 text.setString(current);
             }
         }
         else if (event.text.unicode >= 32 ){
-            sf::String current = text.getString();
+            current = text.getString();
         
             sf::String newText = current + event.text.unicode;  // Пробуем добавить символ
 
@@ -277,17 +278,7 @@ void TextField::setText(const std::string& newText) {
 std::string TextField::getText() const {
     return text.getString();
 }
-// Проверка, помещается ли текст в поле
-// bool TextField::checkTextFits(const std::string& textStr) const {
-//     if (size.x <= 0) return true;
-//     sf::Text tempText = text;                           // Временный текст для измерения
-//     tempText.setString(sf::String::fromUtf8(textStr.begin(), textStr.end()));
 
-//     sf::FloatRect bounds = tempText.getLocalBounds();   // Границы текста  
-//     float padding = 10.0f;                              // Отступы слева и справа (по 5 пикселей)
-
-//     return bounds.width <= (size.x - padding);          // Текст помещается, если его ширина меньше ширины поля минус отступы
-// }
 // Проверка для sf::String (для русского текста)                  // НОВОЕ!!!!
 bool TextField::checkTextFits(const sf::String& textStr) const {
     if (size.x <= 0) return true;
@@ -303,7 +294,7 @@ bool TextField::checkTextFits(const sf::String& textStr) const {
 TextDisplay::TextDisplay(const std::string& varName, const std::string& val, const sf::Font& font) {
     variableName = varName;
     currentValue = val;
-    value = val;        
+       
      // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
     nameLabel.setOutlineColor(sf::Color::Black); 
@@ -311,6 +302,7 @@ TextDisplay::TextDisplay(const std::string& varName, const std::string& val, con
     
     // Настройка текста метки
     nameText.setFont(font);
+    
     nameText.setCharacterSize(14);
     nameText.setFillColor(sf::Color::White);
     nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
@@ -334,8 +326,7 @@ void TextDisplay::draw(sf::RenderTarget& target) const {
 }
 
 void TextDisplay::update(float mouseX, float mouseY) {
-    currentValue = value;
-    text.setString(sf::String::fromUtf8(value.begin(), value.end()));  
+    text.setString(sf::String::fromUtf8(currentValue.begin(), currentValue.end()));  
     // Обновляем позицию и размер
     background.setPosition(position);
     background.setSize(size);

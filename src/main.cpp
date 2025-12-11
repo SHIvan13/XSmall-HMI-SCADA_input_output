@@ -1,16 +1,16 @@
+// main.cpp - простой пример использования GUI виджетов
 #include "scada_app.hpp"
 #include <SFML/Graphics.hpp>
 
 int main() {
     
     // Создаем окно
-    sf::RenderWindow window(sf::VideoMode(1900, 1000), "SCADA System from XML");
+    sf::RenderWindow window(sf::VideoMode(1900, 1000), L"SCADA");
     window.setFramerateLimit(60);
     
     // Загружаем шрифт с поддержкой кириллицы
     sf::Font font;
-    if (!font.loadFromFile("../src/arial.ttf")) {
-        std::cerr << "Error: Failed to load font 'arial.ttf'" << std::endl;
+    if (!font.loadFromFile("../resources/arial.ttf")) {
         std::cerr << "Make sure the font file is in the same directory as the executable" << std::endl;
         return 1;
     }

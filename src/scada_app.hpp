@@ -106,7 +106,6 @@ class TextField: public Widget{
         
         void setOnChange(std::function<void(const std::string&)> callback); // Привязка ф-ции, которая вызовется при изм текста
         void setText(const std::string& text);                              // Изм. текста на кнопке
-        bool checkTextFits(const std::string& textStr) const;               // <- НОВОЕ - Для хранения символов 1 байт
         bool checkTextFits(const sf::String& textStr) const;                // НОВОЕ (2) Защита от выхода текста за границы, sf::String  
         std::string getText() const;                                        // для правильного хранения Русских символов (2 байта)
     private:
@@ -132,11 +131,8 @@ class TextDisplay: public Widget{
         std::string getValue() const;                   // НОВОЕ
     private:
         sf::RectangleShape background; // Фон дисплея
-        sf::Text text; 
-        std::string value;                              // НОВОЕ
-        std::string format;            // Шаблон для отображения
+        sf::Text text;
         std::string currentValue;      // Текущее значение
-        sf::RectangleShape nameLabel;                 
-        
-        
+        sf::RectangleShape nameLabel;
+        sf::Text nameText;                 
 };

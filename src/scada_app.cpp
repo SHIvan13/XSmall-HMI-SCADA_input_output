@@ -189,6 +189,6 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
     if (hasErrors) {
         std::cout << "Errors occured" << std::endl;
     }
-     
+    
     return true;
 };
