@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scada_config>
     <!-- Кнопка -->
-    <button name="start_button" x="50" y="100" width="150" height="50">Пуск</button>
+    <button name="Кнопка" x="50" y="100" width="150" height="100">Пуск</button>
     
     <!-- Поле ввода текста -->
-    <textfield name="input" x="50" y="150" width="200" height="40"></textfield>
+    <textfield name="Введите данные" x="50" y="300" width="200" height="70"></textfield>
     
     <!-- Текстовое поле (дисплей) -->
-    <textdisplay name="pressure_display" x="50" y="250" width="300" height="40" value="100" unit="бар"></textdisplay>
+    <textdisplay name="Давление_котла" x="50" y="500" width="300" height="70" value="100 бар"></textdisplay>
 
-    <button name="stop_button" x="300" y="500" width="150" height="50">Стоп</button>
+    <button name="Кнопка" x="700" y="400" width="850" height="150">Стоп</button>
     
 </scada_config>

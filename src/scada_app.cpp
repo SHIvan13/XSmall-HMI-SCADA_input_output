@@ -33,7 +33,7 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
         
         // === ПАРСИМ КНОПКУ ===
         if (line.find("<button") == 0) {
-            Button btn;
+            Btn btn;
             bool ok = true;
             
             // Извлекаем атрибуты
@@ -88,7 +88,7 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
         
         // === ПАРСИМ ПОЛЕ ВВОДА ===
         else if (line.find("<textfield") == 0) {
-            Input inp;
+            Inpt inp;
             bool ok = true;
             
             // Та же функция getAttr
@@ -132,17 +132,16 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
         
         // === ПАРСИМ ТЕКСТОВЫЙ ДИСПЛЕЙ ===
         else if (line.find("<textdisplay") == 0) {
-            Output out;
+            Otpt out;
             bool ok = true;
             
             auto getAttr = [&](const std::string& attr) -> std::string {
                 size_t pos = line.find(attr + "=\"");
                 if (pos == std::string::npos) {
-                    // unit может отсутствовать
-                    if (attr != "unit") {
-                        std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in output" << std::endl;
-                        ok = false;
-                    }
+                    
+                    std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in output" << std::endl;
+                    ok = false;
+                    
                     return "";
                 }
                 pos += attr.length() + 2;
@@ -164,7 +163,6 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
             }
             
             out.value = getAttr("value");
-            out.unit = getAttr("unit");  // unit может быть пустым
             
             if (out.width <= 0 || out.height <= 0) {
                 std::cout << "Line " << lineNum << ": invalid output`s size" << std::endl;
@@ -173,14 +171,14 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
             
             if (ok) {
                 data.outputs.push_back(out);
-                std::cout << "Output '" << out.name << "' = " << out.value << " " << out.unit << std::endl;
+                std::cout << "Output '" << out.name << "' = " << out.value << std::endl;
             } else {
                 hasErrors = true;
             }
         }
     }
     
-    file.close();
+    file.close();    
     
     // Итог
     std::cout << "\n=== RESULTS ===" << std::endl;
