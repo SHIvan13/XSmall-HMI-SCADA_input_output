@@ -28,7 +28,6 @@ struct Otpt{
     int width;
     int height;
     std::string value;
-    std::string unit;
 };
 
 struct XMLData {
@@ -88,7 +87,7 @@ class Button: public Widget{
         sf::RectangleShape shape;
         sf::Text text;
         sf::Color normalColor, hoverColor, pressColor; // Цвет: Обычный, при наведении, при нажатии
-        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
+        sf::RectangleShape nameLabel;                  
         sf::Text nameText; 
         bool isHovered = false;
         bool isPressed = false;
@@ -107,19 +106,20 @@ class TextField: public Widget{
         
         void setOnChange(std::function<void(const std::string&)> callback); // Привязка ф-ции, которая вызовется при изм текста
         void setText(const std::string& text);                              // Изм. текста на кнопке
-        bool checkTextFits(const std::string& textStr) const;               // <- НОВОЕ
-        std::string getText() const;
+        bool checkTextFits(const std::string& textStr) const;               // <- НОВОЕ - Для хранения символов 1 байт
+        bool checkTextFits(const sf::String& textStr) const;                // НОВОЕ (2) Защита от выхода текста за границы, sf::String  
+        std::string getText() const;                                        // для правильного хранения Русских символов (2 байта)
     private:
         sf::RectangleShape background;                    // Фон поля для текста
         sf::Text text;
         std::function<void(const std::string&)> onChange; // При изменении текста
         bool isFocused = false;                           // Активно ли поле для ввода
-        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
+        sf::RectangleShape nameLabel;                 
         sf::Text nameText; 
 };
 class TextDisplay: public Widget{
     public:
-        TextDisplay(const std::string& varName, const sf::Font& font);
+        TextDisplay(const std::string& varName, const std::string& val, const sf::Font& font);
         void draw(sf::RenderTarget& target) const override;   // Рисует фон + текст
         void update(float mouseX, float mouseY) override;     // Центрирует текст
         void handleEvent(const sf::Event& event,              // Пустой, может пригодиться
@@ -128,18 +128,15 @@ class TextDisplay: public Widget{
         
         // Свои методы:
         void updateDisplay(const std::string& value);  // Обновляет значение для отображения
-        void setFormat(const std::string& format);     // Меняет шаблон вывода (теип-ра 25 / давление 100)
-        void setValue(const std::string& newValue);     //
+        void setValue(const std::string& newValue);     
         std::string getValue() const;                   // НОВОЕ
-        std::string getFormat() const;                  //
     private:
         sf::RectangleShape background; // Фон дисплея
         sf::Text text; 
         std::string value;                              // НОВОЕ
         std::string format;            // Шаблон для отображения
         std::string currentValue;      // Текущее значение
-        sf::RectangleShape nameLabel;                  // ← Новое: прямоугольничек сверху
-        sf::Text nameText; 
+        sf::RectangleShape nameLabel;                 
         
         
 };

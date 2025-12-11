@@ -3,44 +3,6 @@
 using std::endl;
 using std::cout;
 
-// БЛОК 1 - Функция загрузки данных из XML
-XMLData loadInterfaceData(const std::string& filename = "config.xml") {
-    XMLParcer parser;  
-    XMLData data;      // Структура для хранения данных
-
-    bool success = parser.getData(filename, data); // Парсинг структуры
-    
-    if (!success) {
-        std::cerr << "Error loading file: " << filename << endl;
-        return data;  // Возврат пустой структуру
-    }
-    std::cout << "=== Loaded from XML ===" << std::endl;
-    std::cout << "Buttons: " << data.buttons.size() << std::endl;
-    std::cout << "Inputs: " << data.inputs.size() << std::endl;
-    std::cout << "Outputs: " << data.outputs.size() << std::endl;
-    
-    // Посмотреть, что именно загрузилось (для отладки?)
-    // for (const auto& button : data.buttons) {
-    //     std::cout << "Button: " << button.name 
-    //               << " (" << button.text << ")"
-    //               << " position: " << button.x << "," << button.y 
-    //               << " size: " << button.width << "x" << button.height << std::endl;
-    // }
-    
-    // for (const auto& input : data.inputs) {
-    //     std::cout << "Input: " << input.name
-    //               << " position: " << input.x << "," << input.y 
-    //               << " size: " << input.width << "x" << input.height << std::endl;
-    // }
-    
-    // for (const auto& output : data.outputs) {
-    //     std::cout << "Output: " << output.name
-    //               << " value: " << output.value << output.unit
-    //               << " position: " << output.x << "," << output.y 
-    //               << " size: " << output.width << "x" << output.height << std::endl;
-    // }
-    return data;  
-}
 
 // БЛОК 2 - Widget
 void Widget::setPosition(float x, float y){
@@ -68,7 +30,7 @@ Button::Button(const std::string& label, const sf::Font& font){
     nameLabel.setOutlineThickness(2.0f);
     // Настройка текста метки
     nameText.setFont(font);
-    nameText.setCharacterSize(14);                        // с 14 на 16 !!!!
+    nameText.setCharacterSize(14);                        
     nameText.setFillColor(sf::Color::White);    
     // Методы класса sf::RectangleShape
     shape.setFillColor(sf::Color(255, 165, 0)); 
@@ -76,7 +38,7 @@ Button::Button(const std::string& label, const sf::Font& font){
     shape.setOutlineThickness(2.0f);
     // Методы класса sf::Text
     text.setFont(font);
-    text.setString(label);
+    text.setString(sf::String::fromUtf8(label.begin(), label.end()));
     text.setCharacterSize(20);
     text.setFillColor(sf::Color::White);
     // Соб-ные переменные
@@ -112,7 +74,7 @@ void Button::update(float mouseX, float mouseY){
     nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
 
     // Центрирование текста в метке
-    nameText.setString(variableName);                                     // Имя виджета в текст
+    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));                                     // Имя виджета в текст
     sf::FloatRect nameBounds = nameText.getLocalBounds();                 // Размер текста
     nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,           // Центр по x  - Привязка точки в центр текста
                    nameBounds.top + nameBounds.height/2.0f);              // По y
@@ -184,7 +146,7 @@ void Button::setCallback(std::function<void()> callback) {
 }
 // Смена текста
 void Button::setText(const std::string& newText) {
-    text.setString(newText);
+    text.setString(sf::String::fromUtf8(newText.begin(), newText.end()));
 }
 
 
@@ -237,7 +199,7 @@ void TextField::update(float mouseX, float mouseY) {
     nameLabel.setPosition(position.x, position.y - nameHeight);
     nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
     
-    nameText.setString(variableName);
+    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
     sf::FloatRect nameBounds = nameText.getLocalBounds();
     nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,       // Точка привязки из sf::Transformable
                        nameBounds.top + nameBounds.height/2.0f);
@@ -246,6 +208,10 @@ void TextField::update(float mouseX, float mouseY) {
     // Уменьшение текста, выходящего за границы
     while (text.getLocalBounds().width > size.x - 20 && text.getCharacterSize() > 10) {   // Если текст шире, чем поле с отступами и
         text.setCharacterSize(text.getCharacterSize() - 1);                               // размер  шрифтва больще 10px, то уменьшаем на 1px
+    }
+    // Увеличение шрифта, если текст влезает с запасом
+    while (text.getLocalBounds().width < size.x - 40 && text.getCharacterSize() < 18) {
+        text.setCharacterSize(text.getCharacterSize() + 1);
     }
 }
 
@@ -258,25 +224,36 @@ void TextField::handleEvent(const sf::Event& event, const sf::Vector2f& mousePos
             isFocused = true;
             background.setOutlineColor(sf::Color::Blue);  // Синяя рамка при фокусе
             std::cout << "TextField '" << variableName << "' focused" << std::endl;
-        } else {
+        } 
+        else {
             isFocused = false;
             background.setOutlineColor(sf::Color::Black);  // Черная рамка без фокуса
         }
     }
     else if (event.type == sf::Event::TextEntered && isFocused) {
         // Обработка ввода текста
-        if (event.text.unicode == 8) {  // Backspace
-            std::string current = text.getString();
-            if (!current.empty()) {
-                current.pop_back();
+        if (event.text.unicode == 8) {              // Backspace
+            sf::String current = text.getString();
+            if (!current.isEmpty()) {
+                current.erase(current.getSize() - 1);        // НОВОЕ - Проверка наличия символов перед удалением
                 text.setString(current);
             }
         }
-        else if (event.text.unicode >= 32 && event.text.unicode < 128) {  // Печатные символы
-            std::string current = text.getString();
-            current += static_cast<char>(event.text.unicode);
+        else if (event.text.unicode >= 32 ){
+            sf::String current = text.getString();
+        
+            sf::String newText = current + event.text.unicode;  // Пробуем добавить символ
+
+            // Через sf::String (для русского)
+            if (!checkTextFits(newText)) {  // БЕЗ точки с запятой!
+                return;  
+            }
+            // if (!checkTextFits((current + event.text.unicode).toAnsiString())) {
+            //     return; 
+            // }
+            current += event.text.unicode;                   // НОВОЕ - sf::String преобразует число unicode в символ
             text.setString(current);
-            
+
             // Вызываем callback если есть
             if (onChange) {
                 onChange(current);
@@ -294,31 +271,39 @@ void TextField::setOnChange(std::function<void(const std::string&)> callback) {
 }
 
 void TextField::setText(const std::string& newText) {
-    text.setString(newText);
+    text.setString(sf::String::fromUtf8(newText.begin(), newText.end()));
 }
 
 std::string TextField::getText() const {
     return text.getString();
 }
 // Проверка, помещается ли текст в поле
-bool TextField::checkTextFits(const std::string& textStr) const {
+// bool TextField::checkTextFits(const std::string& textStr) const {
+//     if (size.x <= 0) return true;
+//     sf::Text tempText = text;                           // Временный текст для измерения
+//     tempText.setString(sf::String::fromUtf8(textStr.begin(), textStr.end()));
+
+//     sf::FloatRect bounds = tempText.getLocalBounds();   // Границы текста  
+//     float padding = 10.0f;                              // Отступы слева и справа (по 5 пикселей)
+
+//     return bounds.width <= (size.x - padding);          // Текст помещается, если его ширина меньше ширины поля минус отступы
+// }
+// Проверка для sf::String (для русского текста)                  // НОВОЕ!!!!
+bool TextField::checkTextFits(const sf::String& textStr) const {
     if (size.x <= 0) return true;
     sf::Text tempText = text;                           // Временный текст для измерения
-    tempText.setString(textStr);
-
+    tempText.setString(textStr);                        // Прямая установка sf::String
     sf::FloatRect bounds = tempText.getLocalBounds();   // Границы текста  
-    float padding = 10.0f;                              // Отступы слева и справа (по 5 пикселей)
-
+    float padding = 10.0f;                              // Отступы слева и справа
     return bounds.width <= (size.x - padding);          // Текст помещается, если его ширина меньше ширины поля минус отступы
 }
 
 // БЛОК 5 - TextDisplay 
 
-TextDisplay::TextDisplay(const std::string& varName, const sf::Font& font) {
+TextDisplay::TextDisplay(const std::string& varName, const std::string& val, const sf::Font& font) {
     variableName = varName;
-    currentValue = "";
-    value = "";        // НОВОЕ
-    format = "{...}";  // НОВОЕ
+    currentValue = val;
+    value = val;        
      // Настройка метки имени (прямоугольничек сверху)
     nameLabel.setFillColor(sf::Color(60, 60, 60));        // Серый цвет
     nameLabel.setOutlineColor(sf::Color::Black); 
@@ -328,6 +313,7 @@ TextDisplay::TextDisplay(const std::string& varName, const sf::Font& font) {
     nameText.setFont(font);
     nameText.setCharacterSize(14);
     nameText.setFillColor(sf::Color::White);
+    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
 
     background.setFillColor(sf::Color::White);  
     background.setOutlineColor(sf::Color::Black);
@@ -336,10 +322,6 @@ TextDisplay::TextDisplay(const std::string& varName, const sf::Font& font) {
     text.setFont(font);
     text.setCharacterSize(18);
     text.setFillColor(sf::Color::Black);
-    
-    // Устанавливаем начальный текст
-    //updateDisplay("");    // КОММЕНТ ПОКА
-    text.setString("");
 }
 
 void TextDisplay::draw(sf::RenderTarget& target) const {
@@ -353,7 +335,7 @@ void TextDisplay::draw(sf::RenderTarget& target) const {
 
 void TextDisplay::update(float mouseX, float mouseY) {
     currentValue = value;
-    text.setString(value);  
+    text.setString(sf::String::fromUtf8(value.begin(), value.end()));  
     // Обновляем позицию и размер
     background.setPosition(position);
     background.setSize(size);
@@ -370,7 +352,7 @@ void TextDisplay::update(float mouseX, float mouseY) {
     nameLabel.setPosition(position.x, position.y - nameHeight);
     nameLabel.setSize(sf::Vector2f(size.x, nameHeight));
     
-    nameText.setString(variableName);
+    nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
     sf::FloatRect nameBounds = nameText.getLocalBounds();
     nameText.setOrigin(nameBounds.left + nameBounds.width/2.0f,
                        nameBounds.top + nameBounds.height/2.0f);
@@ -386,32 +368,16 @@ bool TextDisplay::contains(float x, float y) const {
     return background.getGlobalBounds().contains(x, y);
 }
 
-void TextDisplay::updateDisplay(const std::string& newValue) {  // НОВОЕ - newValue вместо value
-    value = newValue;                                           // НОВОЕ
-    currentValue = value;
-    
-    // Форматируем текст: заменяем {...} на значение
-    std::string displayText = format;
-    size_t pos = displayText.find("{...}");
-    if (pos != std::string::npos) {
-        displayText.replace(pos, 5, value);
-    }
-    
-    text.setString(displayText);
+void TextDisplay::updateDisplay(const std::string& newValue) {  // НОВОЕ - newValue вместо value                                         // НОВОЕ
+    currentValue = newValue;
+    text.setString(sf::String::fromUtf8(newValue.begin(), newValue.end()));
 }
 
-void TextDisplay::setFormat(const std::string& fmt) {
-    format = fmt;
-    updateDisplay(value);                                       // Обновляем с новым форматом
-}
+
 void TextDisplay::setValue(const std::string& newValue) {       // Внешнее изменение значения
     updateDisplay(newValue);
 }
 
 std::string TextDisplay::getValue() const {
-    return value;
-}
-
-std::string TextDisplay::getFormat() const {
-    return format;
+    return currentValue;
 }
