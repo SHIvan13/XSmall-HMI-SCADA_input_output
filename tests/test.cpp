@@ -11,7 +11,7 @@ protected:
     
     void SetUp() override {
         // Создаем временный файл шрифта для тестов
-        if (!font.loadFromFile("../src/arial.ttf")) {
+        if (!font.loadFromFile("../resources/arial.ttf")) {
             // Если шрифт не загружается, создаем минимальный шрифт
             std::cerr << "Warning: Using default font for tests" << std::endl;
         }
@@ -105,7 +105,6 @@ TEST_F(TestFont, TextFieldOnChangeCallback) {
     
     // Симулируем изменение текста
     textField.setText("Test");
-    // Note: В реальном приложении onChange вызывается при вводе с клавиатуры
 }
 
 // Тесты для класса TextDisplay
