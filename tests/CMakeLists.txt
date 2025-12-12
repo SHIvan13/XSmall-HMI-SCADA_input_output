@@ -36,6 +36,7 @@ set(YOUR_SOURCES
 
 set(YOUR_HEADERS
     ../src/scada_app.hpp 
+    ../src/widget.hpp
 )
 
 add_executable(SCADA_test ${YOUR_SOURCES} ${YOUR_HEADERS})
