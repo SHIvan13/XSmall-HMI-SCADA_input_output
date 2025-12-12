@@ -78,20 +78,16 @@ class Button: public Widget{
         bool contains(float x, float y) const override;      // Проверяет попадание
         
         // Свои методы Button
-        void setColors(const sf::Color& normal, 
-                       const sf::Color& hover,            // Обработка кликов (смена цвета при р. состояниях)
-                       const sf::Color& pressed);   
-        void setCallback(std::function<void()> callback); // Привязка ф-ции, которая вып. при клике
-        void setText(const std::string& text);            // Меняет текст на кнопке
-    private:
+        void setCallback(std::function<void()> callback);    // Привязка ф-ции, которая вып. при клике
+    private: 
         sf::RectangleShape shape;
         sf::Text text;
-        sf::Color normalColor, hoverColor, pressColor; // Цвет: Обычный, при наведении, при нажатии
+        sf::Color normalColor, hoverColor, pressColor;       // Цвет: Обычный, при наведении, при нажатии
         sf::RectangleShape nameLabel;                  
         sf::Text nameText; 
         bool isHovered = false;
         bool isPressed = false;
-        std::function<void()> onClick;                 // Коробка для хранения функции (чтобы можно было ее вызвать)
+        std::function<void()> onClick;                       // Коробка для хранения функции (чтобы можно было ее вызвать)
 };
 
 class TextField: public Widget{
@@ -106,33 +102,32 @@ class TextField: public Widget{
         
         void setOnChange(std::function<void(const std::string&)> callback); // Привязка ф-ции, которая вызовется при изм текста
         void setText(const std::string& text);                              // Изм. текста на кнопке
-        bool checkTextFits(const sf::String& textStr) const;                // Защита от выхода текста за границы, sf::String  
+        bool checkTextFits(const sf::String& textStr) const;                // НОВОЕ (2) Защита от выхода текста за границы, sf::String  
         std::string getText() const;                                        // для правильного хранения Русских символов (2 байта)
     private:
-        sf::RectangleShape background;                    // Фон поля для текста
+        sf::RectangleShape background;                           // Фон поля для текста
         sf::Text text;
-        std::function<void(const std::string&)> onChange; // При изменении текста
-        bool isFocused = false;                           // Активно ли поле для ввода
+        std::function<void(const std::string&)> onChange;        // При изменении текста
+        bool isFocused = false;                                  // Активно ли поле для ввода
         sf::RectangleShape nameLabel;                 
         sf::Text nameText; 
 };
 class TextDisplay: public Widget{
     public:
         TextDisplay(const std::string& varName, const std::string& val, const sf::Font& font);
-        void draw(sf::RenderTarget& target) const override;   // Рисует фон + текст
-        void update(float mouseX, float mouseY) override;     // Центрирует текст
-        void handleEvent(const sf::Event& event,              // Пустой, может пригодиться
+        void draw(sf::RenderTarget& target) const override;      // Рисует фон + текст
+        void update(float mouseX, float mouseY) override;        // Центрирует текст
+        void handleEvent(const sf::Event& event,                 // Пустой, может пригодиться
                         const sf::Vector2f& mousePos) override;
         bool contains(float x, float y) const override;
         
         // Свои методы:
-        void updateDisplay(const std::string& value);  // Обновляет значение для отображения
-        void setValue(const std::string& newValue);     
-        std::string getValue() const;                   // НОВОЕ
+        void updateDisplay(const std::string& value);  // Обновляет значение для отображения  
+        std::string getValue() const;                 
     private:
-        sf::RectangleShape background; // Фон дисплея
+        sf::RectangleShape background;                 // Фон дисплея
         sf::Text text;
-        std::string currentValue;      // Текущее значение
+        std::string currentValue;                      // Текущее значение
         sf::RectangleShape nameLabel;
         sf::Text nameText;                 
 };

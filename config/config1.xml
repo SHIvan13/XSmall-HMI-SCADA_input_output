@@ -7,8 +7,6 @@
     <textfield name="Введите данные" x="50" y="300" width="200" height="70"></textfield>
     
     <!-- Текстовое поле (дисплей) -->
-    <textdisplay name="Давление_котла" x="50" y="500" width="300" height="70" value="100 бар"></textdisplay>
-
-    <button name="Кнопка" x="700" y="400" width="850" height="150">Стоп</button>
+    <textdisplay name="Давление" x="50" y="500" width="300" height="70" value="4 атмосферы"></textdisplay>
     
 </scada_config>

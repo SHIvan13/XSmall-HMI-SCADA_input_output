@@ -1,8 +1,10 @@
-// main.cpp - простой пример использования GUI виджетов
 #include "scada_app.hpp"
 #include <SFML/Graphics.hpp>
+#include <windows.h>
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);  // UTF-8 для консоли
+    SetConsoleCP(CP_UTF8);        // Для ввода тоже
     
     // Создаем окно
     sf::RenderWindow window(sf::VideoMode(1900, 1000), L"SCADA");
