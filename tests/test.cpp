@@ -29,8 +29,7 @@ TEST_F(TestFont, ButtonCreation) {
     
     button.setPosition(100, 200);
     button.setSize(150, 50);
-    
-    button.setText("New Text");
+
     
     // Тестируем callback
     bool callbackCalled = false;
@@ -61,7 +60,6 @@ TEST_F(TestFont, ButtonColors) {
     sf::Color green(0, 255, 0);
     sf::Color blue(0, 0, 255);
     
-    button.setColors(red, green, blue);
 }
 
 // Тесты для класса TextField
@@ -118,8 +116,6 @@ TEST_F(TestFont, TextDisplayCreation) {
     display.setPosition(200, 200);
     display.setSize(150, 40);
     
-    display.setValue("Updated Value");
-    EXPECT_EQ(display.getValue(), "Updated Value");
 }
 
 TEST_F(TestFont, TextDisplayUpdate) {
@@ -130,8 +126,6 @@ TEST_F(TestFont, TextDisplayUpdate) {
     display.updateDisplay("25.5");
     EXPECT_EQ(display.getValue(), "25.5");
     
-    display.setValue("100.0");
-    EXPECT_EQ(display.getValue(), "100.0");
 }
 
 // Тесты для XML парсера
@@ -231,8 +225,6 @@ TEST_F(TestFont, EdgeCases) {
     TextDisplay emptyDisplay("empty", "", font);
     EXPECT_EQ(emptyDisplay.getValue(), "");
     
-    emptyDisplay.setValue("Not empty");
-    EXPECT_EQ(emptyDisplay.getValue(), "Not empty");
 }
 
 // Тест для проверки Unicode поддержки
