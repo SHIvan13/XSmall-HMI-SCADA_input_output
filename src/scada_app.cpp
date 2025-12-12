@@ -1,4 +1,6 @@
 #include "scada_app.hpp"
+#include <fstream>
+#include <vector>
 
 XMLParcer::XMLParcer(){};
 
