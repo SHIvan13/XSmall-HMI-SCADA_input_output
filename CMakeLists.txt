@@ -22,11 +22,13 @@ set(YOUR_SOURCES
     ./src/main.cpp
     ./src/gui_widgets.cpp
     ./src/scada_app.cpp
+    ./src/app.cpp
 )
 
 set(YOUR_HEADERS
     ./src/scada_app.hpp 
     ./src/widget.hpp
+    ./src/app.hpp
 )
 
 add_executable(SCADA ${YOUR_SOURCES} ${YOUR_HEADERS})

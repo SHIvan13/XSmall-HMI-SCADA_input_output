@@ -30,7 +30,7 @@ Button::Button(const std::string& label, const sf::Font& font){
     nameLabel.setOutlineThickness(2.0f);
     // Настройка текста метки
     nameText.setFont(font);
-    nameText.setCharacterSize(18);                        
+    nameText.setCharacterSize(14);                        
     nameText.setFillColor(sf::Color::White);    
     // Методы класса sf::RectangleShape
     shape.setFillColor(sf::Color(255, 165, 0)); 
@@ -39,7 +39,7 @@ Button::Button(const std::string& label, const sf::Font& font){
     // Методы класса sf::Text
     text.setFont(font);
     text.setString(sf::String::fromUtf8(label.begin(), label.end()));
-    text.setCharacterSize(28);
+    text.setCharacterSize(20);
     text.setFillColor(sf::Color::White);
     // Соб-ные переменные
     normalColor = sf::Color(255, 165, 0);     // Оранжевый
@@ -146,7 +146,7 @@ TextField::TextField(const std::string& varName, const sf::Font& font) {
     nameLabel.setOutlineThickness(2.0f);
     // Настройка текста метки
     nameText.setFont(font);
-    nameText.setCharacterSize(18);
+    nameText.setCharacterSize(14);
     nameText.setFillColor(sf::Color::White);
 
     background.setFillColor(sf::Color::White);
@@ -155,7 +155,7 @@ TextField::TextField(const std::string& varName, const sf::Font& font) {
     
     text.setFont(font);
     text.setString("");
-    text.setCharacterSize(24);
+    text.setCharacterSize(18);
     text.setFillColor(sf::Color::Black);
 }
 
@@ -284,7 +284,7 @@ TextDisplay::TextDisplay(const std::string& varName, const std::string& val, con
     // Настройка текста метки
     nameText.setFont(font);
     
-    nameText.setCharacterSize(18);
+    nameText.setCharacterSize(14);
     nameText.setFillColor(sf::Color::White);
     nameText.setString(sf::String::fromUtf8(variableName.begin(), variableName.end()));
 
@@ -293,7 +293,7 @@ TextDisplay::TextDisplay(const std::string& varName, const std::string& val, con
     background.setOutlineThickness(2.0f);
     
     text.setFont(font);
-    text.setCharacterSize(24);
+    text.setCharacterSize(18);
     text.setFillColor(sf::Color::Black);
 }
 
