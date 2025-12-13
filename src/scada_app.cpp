@@ -2,10 +2,6 @@
 #include <fstream>
 #include <vector>
 
-XMLParcer::XMLParcer(){};
-
-XMLParcer::~XMLParcer(){};
-
 std::string XMLParcer::getAttr(const std::string& line, const std::string& attr, bool& ok, int lineNum) {
     size_t pos = line.find(attr + "=\"");
     if (pos == std::string::npos) {
