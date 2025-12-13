@@ -39,6 +39,7 @@ class XMLParcer {
 public:
     XMLParcer();
     bool getData(const std::string& filename, XMLData& data);
+    std::string getAttr(const std::string& line, const std::string& attr, bool& ok, int lineNum);
     ~XMLParcer();
 };
 

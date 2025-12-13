@@ -6,6 +6,18 @@ XMLParcer::XMLParcer(){};
 
 XMLParcer::~XMLParcer(){};
 
+std::string XMLParcer::getAttr(const std::string& line, const std::string& attr, bool& ok, int lineNum) {
+    size_t pos = line.find(attr + "=\"");
+    if (pos == std::string::npos) {
+        std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in button" << std::endl;
+        ok = false;
+        return "";
+    }
+    pos += attr.length() + 2;
+    size_t end = line.find("\"", pos);
+    return line.substr(pos, end - pos);
+}
+
 bool XMLParcer::getData(const std::string& filename, XMLData& data){
     // Открываем файл
     std::ifstream file("../config/" + filename);
@@ -39,29 +51,17 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
             bool ok = true;
             
             // Извлекаем атрибуты
-            auto getAttr = [&](const std::string& attr) -> std::string {
-                size_t pos = line.find(attr + "=\"");
-                if (pos == std::string::npos) {
-                    std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in button" << std::endl;
-                    ok = false;
-                    return "";
-                }
-                pos += attr.length() + 2;
-                size_t end = line.find("\"", pos);
-                return line.substr(pos, end - pos);
-            };
-            
-            btn.name = getAttr("name");
+            btn.name = getAttr(line,"name", ok, lineNum);
             if (btn.name.empty()) ok = false;
             
             // Парсим числа с проверкой
             try {
-                btn.x = std::stoi(getAttr("x"));
-                btn.y = std::stoi(getAttr("y"));
-                btn.width = std::stoi(getAttr("width"));
-                btn.height = std::stoi(getAttr("height"));
-            } catch (...) {
-                std::cout << "Line " << lineNum << ": error in button`s properties" << std::endl;
+                btn.x = std::stoi(getAttr(line, "x", ok, lineNum));
+                btn.y = std::stoi(getAttr(line, "y", ok, lineNum));
+                btn.width = std::stoi(getAttr(line, "width", ok, lineNum));
+                btn.height = std::stoi(getAttr(line, "height", ok, lineNum));
+            } catch (const std::exception& e) {
+                std::cerr << "Line " << lineNum << ": " << e.what() << std::endl;
                 ok = false;
             }
             
@@ -93,29 +93,16 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
             Inpt inp;
             bool ok = true;
             
-            // Та же функция getAttr
-            auto getAttr = [&](const std::string& attr) -> std::string {
-                size_t pos = line.find(attr + "=\"");
-                if (pos == std::string::npos) {
-                    std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in input" << std::endl;
-                    ok = false;
-                    return "";
-                }
-                pos += attr.length() + 2;
-                size_t end = line.find("\"", pos);
-                return line.substr(pos, end - pos);
-            };
-            
-            inp.name = getAttr("name");
+            inp.name = getAttr(line, "name", ok, lineNum);
             if (inp.name.empty()) ok = false;
             
             try {
-                inp.x = std::stoi(getAttr("x"));
-                inp.y = std::stoi(getAttr("y"));
-                inp.width = std::stoi(getAttr("width"));
-                inp.height = std::stoi(getAttr("height"));
-            } catch (...) {
-                std::cout << "Line " << lineNum << ": error in input`s properties" << std::endl;
+                inp.x = std::stoi(getAttr(line, "x", ok, lineNum));
+                inp.y = std::stoi(getAttr(line, "y", ok, lineNum));
+                inp.width = std::stoi(getAttr(line, "width", ok, lineNum));
+                inp.height = std::stoi(getAttr(line, "height", ok, lineNum));
+            } catch (const std::exception& e) {
+                std::cerr << "Line " << lineNum << ":" << e.what() << std::endl;
                 ok = false;
             }
             
@@ -137,34 +124,20 @@ bool XMLParcer::getData(const std::string& filename, XMLData& data){
             Otpt out;
             bool ok = true;
             
-            auto getAttr = [&](const std::string& attr) -> std::string {
-                size_t pos = line.find(attr + "=\"");
-                if (pos == std::string::npos) {
-                    
-                    std::cout << "Line " << lineNum << ": no attribute '" << attr << "' in output" << std::endl;
-                    ok = false;
-                    
-                    return "";
-                }
-                pos += attr.length() + 2;
-                size_t end = line.find("\"", pos);
-                return line.substr(pos, end - pos);
-            };
-            
-            out.name = getAttr("name");
+            out.name = getAttr(line, "name", ok, lineNum);
             if (out.name.empty()) ok = false;
             
             try {
-                out.x = std::stoi(getAttr("x"));
-                out.y = std::stoi(getAttr("y"));
-                out.width = std::stoi(getAttr("width"));
-                out.height = std::stoi(getAttr("height"));
-            } catch (...) {
-                std::cout << "Line " << lineNum << ": error in output`s properties" << std::endl;
+                out.x = std::stoi(getAttr(line, "x", ok, lineNum));
+                out.y = std::stoi(getAttr(line, "y", ok, lineNum));
+                out.width = std::stoi(getAttr(line, "width", ok, lineNum));
+                out.height = std::stoi(getAttr(line, "height", ok, lineNum));
+            } catch (const std::exception& e) {
+                std::cout << "Line " << lineNum << ": " << e.what() << std::endl;
                 ok = false;
             }
             
-            out.value = getAttr("value");
+            out.value = getAttr(line, "value", ok, lineNum);
             
             if (out.width <= 0 || out.height <= 0) {
                 std::cout << "Line " << lineNum << ": invalid output`s size" << std::endl;
